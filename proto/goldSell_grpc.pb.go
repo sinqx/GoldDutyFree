@@ -18,9 +18,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
-	CreateOrder(ctx context.Context, in *OrderModel, opts ...grpc.CallOption) (*Order, error)
+	CreateOrder(ctx context.Context, in *OrderModel, opts ...grpc.CallOption) (*Price, error)
 	UpdateOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error)
-	GetGoldPrice(ctx context.Context, in *Gold, opts ...grpc.CallOption) (*Gold, error)
+	GetGoldPrice(ctx context.Context, in *Gold, opts ...grpc.CallOption) (*Price, error)
 }
 
 type orderServiceClient struct {
@@ -31,8 +31,8 @@ func NewOrderServiceClient(cc grpc.ClientConnInterface) OrderServiceClient {
 	return &orderServiceClient{cc}
 }
 
-func (c *orderServiceClient) CreateOrder(ctx context.Context, in *OrderModel, opts ...grpc.CallOption) (*Order, error) {
-	out := new(Order)
+func (c *orderServiceClient) CreateOrder(ctx context.Context, in *OrderModel, opts ...grpc.CallOption) (*Price, error) {
+	out := new(Price)
 	err := c.cc.Invoke(ctx, "/SellGold.OrderService/CreateOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -49,8 +49,8 @@ func (c *orderServiceClient) UpdateOrder(ctx context.Context, in *Order, opts ..
 	return out, nil
 }
 
-func (c *orderServiceClient) GetGoldPrice(ctx context.Context, in *Gold, opts ...grpc.CallOption) (*Gold, error) {
-	out := new(Gold)
+func (c *orderServiceClient) GetGoldPrice(ctx context.Context, in *Gold, opts ...grpc.CallOption) (*Price, error) {
+	out := new(Price)
 	err := c.cc.Invoke(ctx, "/SellGold.OrderService/GetGoldPrice", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -62,9 +62,9 @@ func (c *orderServiceClient) GetGoldPrice(ctx context.Context, in *Gold, opts ..
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility
 type OrderServiceServer interface {
-	CreateOrder(context.Context, *OrderModel) (*Order, error)
+	CreateOrder(context.Context, *OrderModel) (*Price, error)
 	UpdateOrder(context.Context, *Order) (*Order, error)
-	GetGoldPrice(context.Context, *Gold) (*Gold, error)
+	GetGoldPrice(context.Context, *Gold) (*Price, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -72,13 +72,13 @@ type OrderServiceServer interface {
 type UnimplementedOrderServiceServer struct {
 }
 
-func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *OrderModel) (*Order, error) {
+func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *OrderModel) (*Price, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
 }
 func (UnimplementedOrderServiceServer) UpdateOrder(context.Context, *Order) (*Order, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateOrder not implemented")
 }
-func (UnimplementedOrderServiceServer) GetGoldPrice(context.Context, *Gold) (*Gold, error) {
+func (UnimplementedOrderServiceServer) GetGoldPrice(context.Context, *Gold) (*Price, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGoldPrice not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
