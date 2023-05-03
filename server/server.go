@@ -7,7 +7,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	db "sg/database"
 	pb "sg/proto"
 	"sg/service"
 )
@@ -18,8 +17,6 @@ type OrderServer struct {
 type UserServer struct {
 	pb.UnimplementedUserServiceServer
 }
-
-var database = db.Connect().Debug()
 
 const (
 	grpcPort = ":9000"
@@ -78,6 +75,14 @@ func main() {
 	}
 }
 
-func (s *OrderServer) CreateOrder(_ context.Context, OrderModel *pb.OrderModel) (*pb.Order, error) {
-	return service.CreateOrder(OrderModel), nil
+func (s *OrderServer) GetGoldPrice(_ context.Context, gold *pb.Gold) (float32, error) {
+	return service.GetGoldPrice(gold)
 }
+
+//func (s *UserServer) CreateUser(_ context.Context, User *pb.User) (*pb.User, error) {
+//	return service.CreateUser(User), nil
+//}
+
+//func (s *OrderServer) CreateOrder(_ context.Context, OrderModel *pb.OrderModel) (*pb.Order, error) {
+//	return service.CreateOrder(OrderModel), nil
+//}
