@@ -36,3 +36,12 @@ type OrderModel struct {
 	GoldWeight   uint `json:"goldWeight" form:"goldWeight"`
 	GoldQuantity uint `json:"goldQuantity" form:"goldQuantity"`
 }
+
+type GoldModel struct {
+	gorm.Model
+	ID        uint `gorm:"primary_key"`
+	Weight    uint `json:"weight" form:"weight"`
+	Quantity  uint `json:"quantity"`
+	Price     uint `json:"price" form:"Price"`
+	PriceTime time.Time
+}
