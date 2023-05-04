@@ -2,9 +2,11 @@ package service
 
 import (
 	pb "sg/proto"
+	//"UserService"
 )
 
-func CreateOrder(Order *pb.OrderModel) (pb.Order, error) {
+func CreateOrder(OrderModel *pb.OrderModel) (pb.Order, error) {
 
+	user, _ := GetUserById(&OrderModel.UserId)
 	return
 }
