@@ -52,8 +52,7 @@
               "type": "object",
               "properties": {
                 "price": {
-                  "type": "integer",
-                  "format": "int64"
+                  "$ref": "#/definitions/SellGoldPrice"
                 },
                 "user": {
                   "$ref": "#/definitions/SellGoldUser"
@@ -82,7 +81,7 @@
       }
     },
     "/gold": {
-      "get": {
+      "post": {
         "operationId": "OrderService_GetGoldPrice",
         "responses": {
           "200": {
@@ -100,30 +99,44 @@
         },
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SellGoldGold"
+            }
+          }
+        ],
+        "tags": [
+          "OrderService"
+        ]
+      }
+    },
+    "/hello": {
+      "post": {
+        "operationId": "OrderService_helloWorld",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SellGoldHelloWorld"
+            }
           },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
           {
-            "name": "quantity",
-            "in": "query",
-            "required": false,
-            "type": "number",
-            "format": "float"
-          },
-          {
-            "name": "weight",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "ounce",
-              "gram",
-              "kg"
-            ],
-            "default": "ounce"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SellGoldHelloWorld"
+            }
           }
         ],
         "tags": [
@@ -138,7 +151,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/SellGoldPrice"
+              "$ref": "#/definitions/SellGoldOrder"
             }
           },
           "default": {
@@ -202,7 +215,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/SellGoldUserModel"
+              "$ref": "#/definitions/SellGoldUser"
             }
           },
           "default": {
@@ -219,61 +232,6 @@
             "required": true,
             "type": "integer",
             "format": "int64"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "email",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "phoneNumber",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "address",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "country",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "city",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "zip",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "cvv",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "createdAt",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "date-time"
           }
         ],
         "tags": [
@@ -353,13 +311,6 @@
             "in": "query",
             "required": false,
             "type": "string"
-          },
-          {
-            "name": "createdAt",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "date-time"
           }
         ],
         "tags": [
@@ -422,10 +373,6 @@
                 },
                 "cvv": {
                   "type": "string"
-                },
-                "createdAt": {
-                  "type": "string",
-                  "format": "date-time"
                 }
               }
             }
@@ -463,6 +410,15 @@
       ],
       "default": "ounce"
     },
+    "SellGoldHelloWorld": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "SellGoldListOrder": {
       "type": "object",
       "properties": {
@@ -483,8 +439,7 @@
           "format": "int64"
         },
         "price": {
-          "type": "integer",
-          "format": "int64"
+          "$ref": "#/definitions/SellGoldPrice"
         },
         "user": {
           "$ref": "#/definitions/SellGoldUser"
@@ -570,31 +525,6 @@
           "type": "string"
         },
         "cvv": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "SellGoldUserModel": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "phoneNumber": {
-          "type": "string"
-        },
-        "address": {
           "type": "string"
         }
       }
