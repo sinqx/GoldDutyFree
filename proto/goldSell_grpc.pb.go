@@ -176,7 +176,7 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
-	FindUserById(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	FindUserById(ctx context.Context, in *User, opts ...grpc.CallOption) (*UserModel, error)
 	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	GetAllOrdersByUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*ListOrder, error)
@@ -190,8 +190,8 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 	return &userServiceClient{cc}
 }
 
-func (c *userServiceClient) FindUserById(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
+func (c *userServiceClient) FindUserById(ctx context.Context, in *User, opts ...grpc.CallOption) (*UserModel, error) {
+	out := new(UserModel)
 	err := c.cc.Invoke(ctx, "/SellGold.UserService/FindUserById", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -230,7 +230,7 @@ func (c *userServiceClient) GetAllOrdersByUser(ctx context.Context, in *User, op
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
-	FindUserById(context.Context, *User) (*User, error)
+	FindUserById(context.Context, *User) (*UserModel, error)
 	CreateUser(context.Context, *User) (*User, error)
 	UpdateUser(context.Context, *User) (*User, error)
 	GetAllOrdersByUser(context.Context, *User) (*ListOrder, error)
@@ -241,7 +241,7 @@ type UserServiceServer interface {
 type UnimplementedUserServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) FindUserById(context.Context, *User) (*User, error) {
+func (UnimplementedUserServiceServer) FindUserById(context.Context, *User) (*UserModel, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindUserById not implemented")
 }
 func (UnimplementedUserServiceServer) CreateUser(context.Context, *User) (*User, error) {

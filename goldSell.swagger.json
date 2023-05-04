@@ -202,7 +202,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/SellGoldUser"
+              "$ref": "#/definitions/SellGoldUserModel"
             }
           },
           "default": {
@@ -575,6 +575,27 @@
         "createdAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "SellGoldUserModel": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phoneNumber": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
         }
       }
     },
