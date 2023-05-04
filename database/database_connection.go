@@ -3,17 +3,18 @@ package database
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
+	_ "github.com/lib/pq"
 	"sg/models"
 	"time"
 )
 
 func Connect() *gorm.DB {
-	username := "DB_USERNAME"
-	password := "POSTGRES_PASSWORD"
-	dbName := "DB_DATABASE"
-	dbHost := "DB_HOSTNAME"
-	dbType := "DB_TYPE"
-	dbPort := "DB_PORT"
+	username := "postgres"
+	password := "663857"
+	dbName := "postgres"
+	dbHost := "db"
+	dbType := "postgres"
+	dbPort := "5432"
 
 	dbUri := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", dbHost, username,
 		password, dbName, dbPort) // connection string
@@ -25,6 +26,7 @@ func Connect() *gorm.DB {
 	database.Debug().AutoMigrate(models.User{})
 	database.Debug().AutoMigrate(models.Order{})
 	database.Debug().AutoMigrate(models.OrderModel{})
+	database.Debug().AutoMigrate(models.GoldModel{})
 
 	database.DB().SetMaxIdleConns(10)
 	database.DB().SetMaxOpenConns(100)

@@ -7,13 +7,13 @@ import (
 )
 
 type Order struct {
-	ID           uint               `gorm:"primary_key"`
-	Price        uint               `json:"price"`
-	GoldWeight   uint               `json:"GoldWeight"`
-	GoldQuantity uint               `json:"GoldQuantity"`
-	User         User               `json:"user"`
-	OrderStatus  pb.OrderStatusEnum `json:"orderStatus"`
-	CreatedAt    time.Time
+	ID          uint               `gorm:"primary_key"`
+	Price       uint               `json:"price"`
+	Gold        GoldModel          `json:"gold"`
+	User        User               `json:"user"`
+	OrderStatus pb.OrderStatusEnum `json:"orderStatus"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type User struct {
@@ -31,17 +31,29 @@ type User struct {
 
 type OrderModel struct {
 	gorm.Model
-	ID           uint `gorm:"primary_key"`
-	UserId       uint `json:"userId" form:"userId"`
-	GoldWeight   uint `json:"goldWeight" form:"goldWeight"`
-	GoldQuantity uint `json:"goldQuantity" form:"goldQuantity"`
+	UserId       uint          `json:"userId" form:"userId"`
+	GoldWeight   pb.GoldWeight `json:"goldWeight" form:"goldWeight"`
+	GoldQuantity uint          `json:"goldQuantity" form:"goldQuantity"`
 }
 
 type GoldModel struct {
 	gorm.Model
-	ID        uint `gorm:"primary_key"`
-	Weight    uint `json:"weight" form:"weight"`
-	Quantity  uint `json:"quantity"`
-	Price     uint `json:"price" form:"Price"`
+	Weight    pb.GoldWeight `json:"weight"`
+	Quantity  uint32        `json:"quantity"`
 	PriceTime time.Time
 }
+
+//
+//type GoldWeight struct {
+//	ounce string
+//	gram  string
+//	kg    string
+//}
+//
+//type OrderStatusEnum struct {
+//	inProgress string
+//	Confirmed  string
+//	Canceled   string
+//	Delivered  string
+//	Delivering string
+//}
