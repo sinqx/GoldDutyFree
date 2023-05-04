@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"log"
@@ -19,15 +20,12 @@ type UserServer struct {
 }
 
 const (
-	grpcPort = ":9000"
-	httpPort = ":8080"
+	grpcPort string = ":9000"
+	httpPort string = ":8080"
 )
 
 func runHTTPServer() error {
 	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
 	mux := runtime.NewServeMux()
 
 	opts := []grpc.DialOption{grpc.WithInsecure()}
@@ -42,11 +40,12 @@ func runHTTPServer() error {
 		return err
 	}
 
-	http.Handle("/", mux)
-	http.Handle("/gold", mux)
-
+	gwServer := &http.Server{
+		Addr:    fmt.Sprintf(httpPort),
+		Handler: mux,
+	}
 	log.Printf("HTTP server listening on %s", httpPort)
-	return http.ListenAndServe(httpPort, nil)
+	return gwServer.ListenAndServe()
 }
 
 func runGRPCServer() error {
@@ -57,6 +56,7 @@ func runGRPCServer() error {
 	s := grpc.NewServer()
 	pb.RegisterOrderServiceServer(s, &OrderServer{})
 	pb.RegisterUserServiceServer(s, &UserServer{})
+
 	log.Printf("gRPC server listening on %s", grpcPort)
 	return s.Serve(lis)
 }
@@ -84,13 +84,13 @@ func (s *UserServer) CreateUser(_ context.Context, User *pb.User) (*pb.User, err
 }
 
 func (s *UserServer) UpdateUserById(_ context.Context, User *pb.User) (*pb.User, error) {
-	return service.CreateUser(User)
+	return service.UpdateUserById(User)
 }
 
-func (s *UserServer) findUserById(_ context.Context, Id *uint32) (*pb.UserModel, error) {
+func (s *UserServer) FindUserById(_ context.Context, Id *pb.Id) (*pb.User, error) {
 	return service.GetUserById(Id)
 }
 
 func (s *OrderServer) CreateOrder(_ context.Context, OrderModel *pb.OrderModel) (*pb.Order, error) {
-	return service.CreateOrder(OrderModel), nil
+	return service.CreateOrder(OrderModel)
 }
