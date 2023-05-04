@@ -2,14 +2,13 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	pb "sg/proto"
 )
 
-func GetGoldPrice(gold *pb.Gold) (float32, error) {
+func GetGoldPrice(gold *pb.Gold) (*pb.Price, error) {
 	url := "https://www.goldapi.io/api/XAU/USD/"
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -39,8 +38,9 @@ func GetGoldPrice(gold *pb.Gold) (float32, error) {
 		log.Fatalf("Error deserializing JSON: %v", err)
 	}
 
-	var totalPrice float32
 	var ounceToKg float32 = 31.1035
+	var totalPrice float32
+
 	switch gold.Weight {
 	case pb.GoldWeight_kg:
 		totalPrice = price * ounceToKg * gold.Quantity
@@ -49,11 +49,10 @@ func GetGoldPrice(gold *pb.Gold) (float32, error) {
 	case pb.GoldWeight_ounce:
 		totalPrice = price * gold.Quantity
 	default:
-		fmt.Println("Выбран неизвестный вес")
-
+		log.Fatalf("Выбран неизвестный вес")
 	}
 
-	return totalPrice, nil
+	return &pb.Price{Price: totalPrice}, nil
 }
 
 //func findPrice(weight string, cost uint32) uint32 {  // для вычисления  каррат
