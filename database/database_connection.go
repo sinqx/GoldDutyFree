@@ -10,7 +10,7 @@ import (
 
 func Connect() *gorm.DB {
 	username := "postgres"
-	password := "663857"
+	password := ""
 	dbName := "postgres"
 	dbHost := "db"
 	dbType := "postgres"
