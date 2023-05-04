@@ -8,7 +8,8 @@ import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 service OrderService {
-  rpc CreateOrder(OrderModel) returns(Price){
+
+  rpc CreateOrder(OrderModel) returns(Order){
     option (google.api.http) = {
       post: "/newOrder"
       body: "*"
@@ -24,13 +25,14 @@ service OrderService {
 
   rpc GetGoldPrice(Gold) returns(Price){
     option(google.api.http) = {
-      get: "/gold"
+      post: "/gold"
+      body: "*"
     };
   }
 }
 
 service UserService {
-  rpc FindUserById(User) returns(UserModel){
+  rpc FindUserById(Id) returns(User){
     option(google.api.http) = {
       get: "/user/id/{id}"
     };
@@ -55,11 +57,18 @@ service UserService {
       get: "/user/orders/id/{id}"
     };
   }
+
+
+}
+
+
+message Id{
+  uint32 id = 1;
 }
 
 message Order {
   uint32 id = 1;
-  uint32 price = 2;
+  Price price = 2;
   User user = 3;
   Gold gold = 4;
   OrderStatusEnum orderStatus = 5;
@@ -83,7 +92,6 @@ message User {
   string city = 7;
   string zip = 8;
   string cvv = 9;
-  google.protobuf.Timestamp created_at = 10;
 }
 
 message UserModel {
