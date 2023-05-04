@@ -75,14 +75,22 @@ func main() {
 	}
 }
 
-func (s *OrderServer) GetGoldPrice(_ context.Context, gold *pb.Gold) (float32, error) {
-	return service.GetGoldPrice(gold)
+func (s *OrderServer) GetGoldPrice(_ context.Context, Gold *pb.Gold) (*pb.Price, error) {
+	return service.GetGoldPrice(Gold)
 }
 
-//func (s *UserServer) CreateUser(_ context.Context, User *pb.User) (*pb.User, error) {
-//	return service.CreateUser(User), nil
-//}
+func (s *UserServer) CreateUser(_ context.Context, User *pb.User) (*pb.User, error) {
+	return service.CreateUser(User)
+}
 
-//func (s *OrderServer) CreateOrder(_ context.Context, OrderModel *pb.OrderModel) (*pb.Order, error) {
-//	return service.CreateOrder(OrderModel), nil
-//}
+func (s *UserServer) UpdateUserById(_ context.Context, User *pb.User) (*pb.User, error) {
+	return service.CreateUser(User)
+}
+
+func (s *UserServer) findUserById(_ context.Context, Id *uint32) (*pb.UserModel, error) {
+	return service.GetUserById(Id)
+}
+
+func (s *OrderServer) CreateOrder(_ context.Context, OrderModel *pb.OrderModel) (*pb.Order, error) {
+	return service.CreateOrder(OrderModel), nil
+}
