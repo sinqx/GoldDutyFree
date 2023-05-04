@@ -1,0 +1,13 @@
+FROM golang:1.20-alpine
+
+RUN apk add --no-cache git
+
+ADD . /app/SellGold
+
+WORKDIR /SellGold
+
+COPY . ./
+
+RUN go build -o ./cmd/bin/server ./server
+
+ENTRYPOINT ["/SellGold/cmd/bin/server"]
