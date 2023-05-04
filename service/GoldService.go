@@ -10,7 +10,6 @@ import (
 
 func GetGoldPrice(gold *pb.Gold) (*pb.Price, error) {
 	url := "https://www.goldapi.io/api/XAU/USD/"
-
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatalf("Error creating HTTP request: %v", err)
@@ -19,7 +18,6 @@ func GetGoldPrice(gold *pb.Gold) (*pb.Price, error) {
 
 	req.Header.Set("x-access-token", "goldapi-h2mk9rlh7fi2if-io")
 	req.Header.Set("Content-Type", "application/json")
-
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -32,14 +30,18 @@ func GetGoldPrice(gold *pb.Gold) (*pb.Price, error) {
 		log.Fatalf("Error reading HTTP response: %v", err)
 	}
 
-	var price float32
-	err = json.Unmarshal(body, &price)
+	type GoldInfo struct {
+		Price float32 `json:"price"`
+	}
+	var goldInfo GoldInfo
+	err = json.Unmarshal(body, &goldInfo)
 	if err != nil {
 		log.Fatalf("Error deserializing JSON: %v", err)
 	}
 
 	var ounceToKg float32 = 31.1035
 	var totalPrice float32
+	var price = goldInfo.Price
 
 	switch gold.Weight {
 	case pb.GoldWeight_kg:
@@ -73,4 +75,29 @@ func GetGoldPrice(gold *pb.Gold) (*pb.Price, error) {
 //		fmt.Println("Выбран неизвестный вес")
 //	}
 //	return weight * cost
+//}
+
+//Пример json ответа с goldApi
+//
+//{
+//"timestamp": 1683191459,
+//"metal": "XAU",
+//"currency": "USD",
+//"exchange": "FOREXCOM",
+//"symbol": "FOREXCOM:XAUUSD",
+//"prev_close_price": 2039.27,
+//"open_price": 2039.27,
+//"low_price": 2030.39,
+//"high_price": 2081.46,
+//"open_time": 1683158400,
+//"price": 2034.22,
+//"ch": -5.05,
+//"chp": -0.25,
+//"ask": 2034.62,
+//"bid": 2033.94,
+//"price_gram_24k": 65.4017,
+//"price_gram_22k": 59.9516,
+//"price_gram_21k": 57.2265,
+//"price_gram_20k": 54.5014,
+//"price_gram_18k": 49.0513
 //}
