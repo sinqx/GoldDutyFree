@@ -1,13 +1,13 @@
 package service
 
 import (
+	_ "github.com/lib/pq"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	db "sg/database"
 	"sg/models"
-	"time"
-
 	pb "sg/proto"
+	"time"
 )
 
 var database = db.Connect()
@@ -26,7 +26,7 @@ func CreateUser(user *pb.User) (*pb.User, error) {
 		City:        user.City,
 		Zip:         user.Zip,
 		CVV:         user.Cvv,
-		CreatedAt:   time.Time{},
+		CreatedAt:   time.Now(),
 	}
 
 	database.NewRecord(newUser)
@@ -35,15 +35,25 @@ func CreateUser(user *pb.User) (*pb.User, error) {
 	return user, nil
 }
 
-func GetUserById(id *uint32) (*pb.UserModel, error) { //????????
+func GetUserById(id *pb.Id) (*pb.User, error) { //????????
 	var user models.User
 	rowsAffected := database.Where("id = ?", id).Find(&user).RowsAffected
 
 	if rowsAffected == 0 {
-		return &pb.UserModel{}, status.Error(codes.NotFound, "Cannot find a User with this id")
+		return &pb.User{}, status.Error(codes.NotFound, "Cannot find a User with this id")
 	}
 
-	return &pb.UserModel{Id: uint32(user.ID), Name: user.Name, Email: user.Email, PhoneNumber: user.PhoneNumber, Address: user.Address}, nil
+	return &pb.User{
+		Id:          uint32(user.ID),
+		Name:        user.Name,
+		Email:       user.Email,
+		PhoneNumber: user.PhoneNumber,
+		Address:     user.Address,
+		Country:     user.Country,
+		City:        user.City,
+		Zip:         user.Zip,
+		Cvv:         user.CVV,
+	}, nil
 }
 
 func UpdateUserById(user *pb.User) (*pb.User, error) {
