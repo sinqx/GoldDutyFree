@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -13,17 +14,19 @@ import (
 
 var database = db.Connect()
 
-type UserServer struct {
-	pb.UnimplementedUserServiceServer
-}
-
 func CreateUser(user *pb.User) (*pb.User, error) {
 	if user == nil {
 		return nil, status.Error(codes.InvalidArgument, "Nil pointer error")
 	}
+
+	if user.GetEmail() == "" || user.GetName() == "" ||
+		user.GetPhoneNumber() == "" || user.GetAddress() == "" {
+		return nil, fmt.Errorf("email name and phoneNumber are empty")
+	}
+
 	newUser, err := fillDataBaseUserInfo(user)
 	if err != nil {
-		log.Println("Failed to create new User in Database: %v", err)
+		log.Println("Failed to create new User in Database: ", err)
 	}
 
 	database.NewRecord(newUser)
@@ -45,6 +48,13 @@ func GetUserById(id *pb.Id) (*pb.User, error) { //????????
 }
 
 func UpdateUserById(user *pb.User) (*pb.User, error) {
+	if user == nil {
+		return nil, status.Error(codes.InvalidArgument, "Nil pointer error")
+	}
+	if user.GetEmail() == "" || user.GetName() == "" ||
+		user.GetPhoneNumber() == "" || user.GetAddress() == "" {
+		return nil, status.Error(codes.InvalidArgument, "email name and phoneNumber are empty")
+	}
 
 	var updateUser models.User
 	database.Where("id =?", user.GetId()).Find(&updateUser)
