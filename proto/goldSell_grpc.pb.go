@@ -18,7 +18,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
-	HelloWorld(ctx context.Context, in *HelloWorld, opts ...grpc.CallOption) (*HelloWorld, error)
 	CreateOrder(ctx context.Context, in *OrderModel, opts ...grpc.CallOption) (*Order, error)
 	UpdateOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error)
 	GetGoldPrice(ctx context.Context, in *Gold, opts ...grpc.CallOption) (*Price, error)
@@ -30,15 +29,6 @@ type orderServiceClient struct {
 
 func NewOrderServiceClient(cc grpc.ClientConnInterface) OrderServiceClient {
 	return &orderServiceClient{cc}
-}
-
-func (c *orderServiceClient) HelloWorld(ctx context.Context, in *HelloWorld, opts ...grpc.CallOption) (*HelloWorld, error) {
-	out := new(HelloWorld)
-	err := c.cc.Invoke(ctx, "/SellGold.OrderService/helloWorld", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *orderServiceClient) CreateOrder(ctx context.Context, in *OrderModel, opts ...grpc.CallOption) (*Order, error) {
@@ -72,7 +62,6 @@ func (c *orderServiceClient) GetGoldPrice(ctx context.Context, in *Gold, opts ..
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility
 type OrderServiceServer interface {
-	HelloWorld(context.Context, *HelloWorld) (*HelloWorld, error)
 	CreateOrder(context.Context, *OrderModel) (*Order, error)
 	UpdateOrder(context.Context, *Order) (*Order, error)
 	GetGoldPrice(context.Context, *Gold) (*Price, error)
@@ -83,9 +72,6 @@ type OrderServiceServer interface {
 type UnimplementedOrderServiceServer struct {
 }
 
-func (UnimplementedOrderServiceServer) HelloWorld(context.Context, *HelloWorld) (*HelloWorld, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HelloWorld not implemented")
-}
 func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *OrderModel) (*Order, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
 }
@@ -106,24 +92,6 @@ type UnsafeOrderServiceServer interface {
 
 func RegisterOrderServiceServer(s grpc.ServiceRegistrar, srv OrderServiceServer) {
 	s.RegisterService(&OrderService_ServiceDesc, srv)
-}
-
-func _OrderService_HelloWorld_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HelloWorld)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrderServiceServer).HelloWorld(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/SellGold.OrderService/helloWorld",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).HelloWorld(ctx, req.(*HelloWorld))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _OrderService_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -188,10 +156,6 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*OrderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "helloWorld",
-			Handler:    _OrderService_HelloWorld_Handler,
-		},
-		{
 			MethodName: "CreateOrder",
 			Handler:    _OrderService_CreateOrder_Handler,
 		},
@@ -216,6 +180,7 @@ type UserServiceClient interface {
 	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	GetAllOrdersByUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*ListOrder, error)
+	GetAllUsers(ctx context.Context, in *User, opts ...grpc.CallOption) (*ListUser, error)
 }
 
 type userServiceClient struct {
@@ -262,6 +227,15 @@ func (c *userServiceClient) GetAllOrdersByUser(ctx context.Context, in *User, op
 	return out, nil
 }
 
+func (c *userServiceClient) GetAllUsers(ctx context.Context, in *User, opts ...grpc.CallOption) (*ListUser, error) {
+	out := new(ListUser)
+	err := c.cc.Invoke(ctx, "/SellGold.UserService/GetAllUsers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -270,6 +244,7 @@ type UserServiceServer interface {
 	CreateUser(context.Context, *User) (*User, error)
 	UpdateUser(context.Context, *User) (*User, error)
 	GetAllOrdersByUser(context.Context, *User) (*ListOrder, error)
+	GetAllUsers(context.Context, *User) (*ListUser, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -288,6 +263,9 @@ func (UnimplementedUserServiceServer) UpdateUser(context.Context, *User) (*User,
 }
 func (UnimplementedUserServiceServer) GetAllOrdersByUser(context.Context, *User) (*ListOrder, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllOrdersByUser not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllUsers(context.Context, *User) (*ListUser, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsers not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -374,6 +352,24 @@ func _UserService_GetAllOrdersByUser_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/SellGold.UserService/GetAllUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllUsers(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -396,6 +392,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllOrdersByUser",
 			Handler:    _UserService_GetAllOrdersByUser_Handler,
+		},
+		{
+			MethodName: "GetAllUsers",
+			Handler:    _UserService_GetAllUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

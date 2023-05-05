@@ -58,12 +58,11 @@ service UserService {
     };
   }
 
-
-}
-
-
-message Id{
-  uint32 id = 1;
+  rpc GetAllUsers(User) returns(ListUser){
+    option(google.api.http) = {
+      get: "/user/all"
+    };
+  }
 }
 
 message Order {
@@ -77,7 +76,6 @@ message Order {
 }
 
 message OrderModel{
-  uint32 id = 1;
   uint32 userId = 2;
   Gold gold = 3;
 }
@@ -92,10 +90,11 @@ message User {
   string city = 7;
   string zip = 8;
   string cvv = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
 }
 
 message UserModel {
-  uint32 id = 1;
   string name = 2;
   string email = 3;
   string phoneNumber = 4;
@@ -103,13 +102,20 @@ message UserModel {
 }
 
 message Gold {
-  uint32 id = 1;
   float quantity = 2;
   GoldWeight weight = 4;
 }
 
+message Id{
+  uint32 id = 1;
+}
+
 message ListOrder {
-  repeated Order order = 1;
+  repeated Order orders = 1;
+}
+
+message ListUser {
+  repeated User users = 1;
 }
 
 message Price {
