@@ -44,7 +44,6 @@ func CreateOrder(OrderModel *pb.OrderModel) (*pb.Order, error) {
 	database.Create(&dbOrder)
 
 	return &pb.Order{
-		Id:          OrderModel.Id,
 		Price:       price,
 		User:        user,
 		Gold:        OrderModel.Gold,
