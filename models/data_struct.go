@@ -27,6 +27,7 @@ type User struct {
 	Zip         string `json:"zip" form:"Zip"`
 	CVV         string `json:"CVV" form:"CVV"`
 	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type OrderModel struct {
