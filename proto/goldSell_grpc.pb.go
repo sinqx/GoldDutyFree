@@ -19,7 +19,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
 	CreateOrder(ctx context.Context, in *OrderModel, opts ...grpc.CallOption) (*Order, error)
+	ConfirmOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error)
 	UpdateOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error)
+	GetAllOrders(ctx context.Context, in *Order, opts ...grpc.CallOption) (*ListOrder, error)
 	GetGoldPrice(ctx context.Context, in *Gold, opts ...grpc.CallOption) (*Price, error)
 }
 
@@ -40,9 +42,27 @@ func (c *orderServiceClient) CreateOrder(ctx context.Context, in *OrderModel, op
 	return out, nil
 }
 
+func (c *orderServiceClient) ConfirmOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error) {
+	out := new(Order)
+	err := c.cc.Invoke(ctx, "/SellGold.OrderService/ConfirmOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *orderServiceClient) UpdateOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error) {
 	out := new(Order)
 	err := c.cc.Invoke(ctx, "/SellGold.OrderService/UpdateOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) GetAllOrders(ctx context.Context, in *Order, opts ...grpc.CallOption) (*ListOrder, error) {
+	out := new(ListOrder)
+	err := c.cc.Invoke(ctx, "/SellGold.OrderService/GetAllOrders", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +83,9 @@ func (c *orderServiceClient) GetGoldPrice(ctx context.Context, in *Gold, opts ..
 // for forward compatibility
 type OrderServiceServer interface {
 	CreateOrder(context.Context, *OrderModel) (*Order, error)
+	ConfirmOrder(context.Context, *Order) (*Order, error)
 	UpdateOrder(context.Context, *Order) (*Order, error)
+	GetAllOrders(context.Context, *Order) (*ListOrder, error)
 	GetGoldPrice(context.Context, *Gold) (*Price, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
@@ -75,8 +97,14 @@ type UnimplementedOrderServiceServer struct {
 func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *OrderModel) (*Order, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
 }
+func (UnimplementedOrderServiceServer) ConfirmOrder(context.Context, *Order) (*Order, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmOrder not implemented")
+}
 func (UnimplementedOrderServiceServer) UpdateOrder(context.Context, *Order) (*Order, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) GetAllOrders(context.Context, *Order) (*ListOrder, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllOrders not implemented")
 }
 func (UnimplementedOrderServiceServer) GetGoldPrice(context.Context, *Gold) (*Price, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGoldPrice not implemented")
@@ -112,6 +140,24 @@ func _OrderService_CreateOrder_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_ConfirmOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Order)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ConfirmOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/SellGold.OrderService/ConfirmOrder",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ConfirmOrder(ctx, req.(*Order))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrderService_UpdateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Order)
 	if err := dec(in); err != nil {
@@ -126,6 +172,24 @@ func _OrderService_UpdateOrder_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).UpdateOrder(ctx, req.(*Order))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_GetAllOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Order)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetAllOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/SellGold.OrderService/GetAllOrders",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetAllOrders(ctx, req.(*Order))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -160,8 +224,16 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OrderService_CreateOrder_Handler,
 		},
 		{
+			MethodName: "ConfirmOrder",
+			Handler:    _OrderService_ConfirmOrder_Handler,
+		},
+		{
 			MethodName: "UpdateOrder",
 			Handler:    _OrderService_UpdateOrder_Handler,
+		},
+		{
+			MethodName: "GetAllOrders",
+			Handler:    _OrderService_GetAllOrders_Handler,
 		},
 		{
 			MethodName: "GetGoldPrice",
@@ -178,7 +250,7 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 type UserServiceClient interface {
 	FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*User, error)
 	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
-	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	UpdateUserById(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	GetAllOrdersByUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*ListOrder, error)
 	GetAllUsers(ctx context.Context, in *User, opts ...grpc.CallOption) (*ListUser, error)
 }
@@ -209,9 +281,9 @@ func (c *userServiceClient) CreateUser(ctx context.Context, in *User, opts ...gr
 	return out, nil
 }
 
-func (c *userServiceClient) UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
+func (c *userServiceClient) UpdateUserById(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/SellGold.UserService/UpdateUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/SellGold.UserService/UpdateUserById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -242,7 +314,7 @@ func (c *userServiceClient) GetAllUsers(ctx context.Context, in *User, opts ...g
 type UserServiceServer interface {
 	FindUserById(context.Context, *Id) (*User, error)
 	CreateUser(context.Context, *User) (*User, error)
-	UpdateUser(context.Context, *User) (*User, error)
+	UpdateUserById(context.Context, *User) (*User, error)
 	GetAllOrdersByUser(context.Context, *User) (*ListOrder, error)
 	GetAllUsers(context.Context, *User) (*ListUser, error)
 	mustEmbedUnimplementedUserServiceServer()
@@ -258,8 +330,8 @@ func (UnimplementedUserServiceServer) FindUserById(context.Context, *Id) (*User,
 func (UnimplementedUserServiceServer) CreateUser(context.Context, *User) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
-func (UnimplementedUserServiceServer) UpdateUser(context.Context, *User) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+func (UnimplementedUserServiceServer) UpdateUserById(context.Context, *User) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserById not implemented")
 }
 func (UnimplementedUserServiceServer) GetAllOrdersByUser(context.Context, *User) (*ListOrder, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllOrdersByUser not implemented")
@@ -316,20 +388,20 @@ func _UserService_CreateUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserService_UpdateUserById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(User)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).UpdateUser(ctx, in)
+		return srv.(UserServiceServer).UpdateUserById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SellGold.UserService/UpdateUser",
+		FullMethod: "/SellGold.UserService/UpdateUserById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UpdateUser(ctx, req.(*User))
+		return srv.(UserServiceServer).UpdateUserById(ctx, req.(*User))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -386,8 +458,8 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_CreateUser_Handler,
 		},
 		{
-			MethodName: "UpdateUser",
-			Handler:    _UserService_UpdateUser_Handler,
+			MethodName: "UpdateUserById",
+			Handler:    _UserService_UpdateUserById_Handler,
 		},
 		{
 			MethodName: "GetAllOrdersByUser",

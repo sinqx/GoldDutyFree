@@ -11,15 +11,28 @@ service OrderService {
 
   rpc CreateOrder(OrderModel) returns(Order){
     option (google.api.http) = {
-      post: "/newOrder"
+      post: "/order/new"
+      body: "*"
+    };
+  }
+
+  rpc ConfirmOrder(Order) returns(Order){
+    option (google.api.http) = {
+      post: "/order/confirm"
       body: "*"
     };
   }
 
   rpc UpdateOrder(Order) returns(Order){
     option (google.api.http) = {
-      put: "/Order/update/id/{id}"
+      put: "/order/update/id/{id}"
       body: "*"
+    };
+  }
+
+  rpc GetAllOrders(Order) returns(ListOrder){
+    option (google.api.http) = {
+      get: "/order/all"
     };
   }
 
@@ -40,12 +53,12 @@ service UserService {
 
   rpc CreateUser(User) returns(User){
     option(google.api.http) = {
-      post: "/newUser"
+      post: "/user/new"
       body: "*"
     };
   }
 
-  rpc UpdateUser(User) returns(User){
+  rpc UpdateUserById(User) returns(User){
     option(google.api.http) = {
       put: "/user/update/id/{id}"
       body: "*"
@@ -67,7 +80,7 @@ service UserService {
 
 message Order {
   uint32 id = 1;
-  Price price = 2;
+  uint32 price = 2;
   User user = 3;
   Gold gold = 4;
   OrderStatusEnum orderStatus = 5;
@@ -76,8 +89,8 @@ message Order {
 }
 
 message OrderModel{
-  uint32 userId = 2;
-  Gold gold = 3;
+  uint32 userId = 1;
+  Gold gold = 2;
 }
 
 message User {
@@ -89,21 +102,21 @@ message User {
   string country = 6;
   string city = 7;
   string zip = 8;
-  string cvv = 9;
-  google.protobuf.Timestamp created_at = 10;
-  google.protobuf.Timestamp updated_at = 11;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
 }
 
 message UserModel {
-  string name = 2;
-  string email = 3;
-  string phoneNumber = 4;
-  string address = 5;
+  string name = 1;
+  string email = 2;
+  string phoneNumber = 3;
+  string address = 4;
 }
 
 message Gold {
-  float quantity = 2;
-  GoldWeight weight = 4;
+  float quantity = 1;
+  GoldWeight weight = 2;
+  google.protobuf.Timestamp priceTime = 3;
 }
 
 message Id{
@@ -123,11 +136,12 @@ message Price {
 }
 
 enum OrderStatusEnum {
-  inProgress = 0;
+  InProgress = 0;
   Confirmed = 1;
   Canceled = 2;
-  Delivered = 3;
-  Delivering = 4;
+  Delivering = 3;
+  Delivered = 4;
+  Finished = 5;
 }
 
 enum GoldWeight {
