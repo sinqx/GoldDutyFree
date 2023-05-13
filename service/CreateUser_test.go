@@ -21,7 +21,6 @@ func TestCreateUser(t *testing.T) {
 			Country:     "KG",
 			City:        "BSHK",
 			Zip:         "12345",
-			Cvv:         "223",
 			CreatedAt:   timestamppb.Now(),
 			UpdatedAt:   timestamppb.Now(),
 		},
@@ -34,7 +33,6 @@ func TestCreateUser(t *testing.T) {
 			Country:     "",
 			City:        "",
 			Zip:         "",
-			Cvv:         "",
 			CreatedAt:   nil,
 			UpdatedAt:   nil,
 		},
@@ -47,7 +45,6 @@ func TestCreateUser(t *testing.T) {
 			Country:     "",
 
 			Zip: "",
-			Cvv: "",
 
 			UpdatedAt: nil,
 		})
