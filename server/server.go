@@ -9,15 +9,7 @@ import (
 	"net"
 	"net/http"
 	pb "sg/proto"
-	"sg/service"
 )
-
-type OrderServer struct {
-	pb.UnimplementedOrderServiceServer
-}
-type UserServer struct {
-	pb.UnimplementedUserServiceServer
-}
 
 const (
 	grpcPort string = ":9000"
@@ -54,8 +46,8 @@ func runGRPCServer() error {
 		return err
 	}
 	s := grpc.NewServer()
-	pb.RegisterOrderServiceServer(s, &OrderServer{})
-	pb.RegisterUserServiceServer(s, &UserServer{})
+	pb.RegisterOrderServiceServer(s, &pb.UnimplementedOrderServiceServer{})
+	pb.RegisterUserServiceServer(s, &pb.UnimplementedUserServiceServer{})
 
 	log.Printf("gRPC server listening on %s", grpcPort)
 	return s.Serve(lis)
@@ -73,28 +65,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to run HTTP server: %v", err)
 	}
-}
-
-func (s *UserServer) CreateUser(_ context.Context, User *pb.User) (*pb.User, error) {
-	return service.CreateUser(User)
-}
-
-func (s *UserServer) UpdateUserById(_ context.Context, User *pb.User) (*pb.User, error) {
-	return service.UpdateUserById(User)
-}
-
-func (s *UserServer) FindUserById(_ context.Context, Id *pb.Id) (*pb.User, error) {
-	return service.GetUserById(Id)
-}
-
-func (s *UserServer) GetAllUsers(_ context.Context, _ *pb.User) (*pb.ListUser, error) {
-	return service.GetAllUsers()
-}
-
-func (s *OrderServer) CreateOrder(_ context.Context, OrderModel *pb.OrderModel) (*pb.Order, error) {
-	return service.CreateOrder(OrderModel)
-}
-
-func (s *OrderServer) GetGoldPrice(_ context.Context, Gold *pb.Gold) (*pb.Price, error) {
-	return service.GetGoldPrice(Gold)
 }
