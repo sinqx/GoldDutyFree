@@ -19,67 +19,6 @@
     "application/json"
   ],
   "paths": {
-    "/Order/update/id/{id}": {
-      "put": {
-        "operationId": "OrderService_UpdateOrder",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/SellGoldOrder"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "price": {
-                  "$ref": "#/definitions/SellGoldPrice"
-                },
-                "user": {
-                  "$ref": "#/definitions/SellGoldUser"
-                },
-                "gold": {
-                  "$ref": "#/definitions/SellGoldGold"
-                },
-                "orderStatus": {
-                  "$ref": "#/definitions/SellGoldOrderStatusEnum"
-                },
-                "createdAt": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "updatedAt": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              }
-            }
-          }
-        ],
-        "tags": [
-          "OrderService"
-        ]
-      }
-    },
     "/gold": {
       "post": {
         "operationId": "OrderService_GetGoldPrice",
@@ -112,7 +51,195 @@
         ]
       }
     },
-    "/newOrder": {
+    "/order/all": {
+      "get": {
+        "operationId": "OrderService_GetAllOrders",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SellGoldListOrder"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "user.id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "user.name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user.email",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user.phoneNumber",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user.address",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user.country",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user.city",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user.zip",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user.createdAt",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "user.updatedAt",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "gold.quantity",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "format": "float"
+          },
+          {
+            "name": "gold.weight",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "ounce",
+              "gram",
+              "kg"
+            ],
+            "default": "ounce"
+          },
+          {
+            "name": "gold.priceTime",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "orderStatus",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "InProgress",
+              "Confirmed",
+              "Canceled",
+              "Delivering",
+              "Delivered",
+              "Finished"
+            ],
+            "default": "InProgress"
+          },
+          {
+            "name": "createdAt",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "updatedAt",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          }
+        ],
+        "tags": [
+          "OrderService"
+        ]
+      }
+    },
+    "/order/confirm": {
+      "post": {
+        "operationId": "OrderService_ConfirmOrder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SellGoldOrder"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SellGoldOrder"
+            }
+          }
+        ],
+        "tags": [
+          "OrderService"
+        ]
+      }
+    },
+    "/order/new": {
       "post": {
         "operationId": "OrderService_CreateOrder",
         "responses": {
@@ -144,14 +271,14 @@
         ]
       }
     },
-    "/newUser": {
-      "post": {
-        "operationId": "UserService_CreateUser",
+    "/order/update/id/{id}": {
+      "put": {
+        "operationId": "OrderService_UpdateOrder",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/SellGoldUser"
+              "$ref": "#/definitions/SellGoldOrder"
             }
           },
           "default": {
@@ -163,16 +290,46 @@
         },
         "parameters": [
           {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/SellGoldUser"
+              "type": "object",
+              "properties": {
+                "price": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "user": {
+                  "$ref": "#/definitions/SellGoldUser"
+                },
+                "gold": {
+                  "$ref": "#/definitions/SellGoldGold"
+                },
+                "orderStatus": {
+                  "$ref": "#/definitions/SellGoldOrderStatusEnum"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
             }
           }
         ],
         "tags": [
-          "UserService"
+          "OrderService"
         ]
       }
     },
@@ -244,12 +401,6 @@
             "type": "string"
           },
           {
-            "name": "cvv",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "createdAt",
             "in": "query",
             "required": false,
@@ -293,6 +444,38 @@
             "required": true,
             "type": "integer",
             "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/user/new": {
+      "post": {
+        "operationId": "UserService_CreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SellGoldUser"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SellGoldUser"
+            }
           }
         ],
         "tags": [
@@ -368,12 +551,6 @@
             "type": "string"
           },
           {
-            "name": "cvv",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "createdAt",
             "in": "query",
             "required": false,
@@ -395,7 +572,7 @@
     },
     "/user/update/id/{id}": {
       "put": {
-        "operationId": "UserService_UpdateUser",
+        "operationId": "UserService_UpdateUserById",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -446,9 +623,6 @@
                 "zip": {
                   "type": "string"
                 },
-                "cvv": {
-                  "type": "string"
-                },
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
@@ -477,6 +651,10 @@
         },
         "weight": {
           "$ref": "#/definitions/SellGoldGoldWeight"
+        },
+        "priceTime": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -521,7 +699,8 @@
           "format": "int64"
         },
         "price": {
-          "$ref": "#/definitions/SellGoldPrice"
+          "type": "integer",
+          "format": "int64"
         },
         "user": {
           "$ref": "#/definitions/SellGoldUser"
@@ -557,13 +736,14 @@
     "SellGoldOrderStatusEnum": {
       "type": "string",
       "enum": [
-        "inProgress",
+        "InProgress",
         "Confirmed",
         "Canceled",
+        "Delivering",
         "Delivered",
-        "Delivering"
+        "Finished"
       ],
-      "default": "inProgress"
+      "default": "InProgress"
     },
     "SellGoldPrice": {
       "type": "object",
@@ -600,9 +780,6 @@
           "type": "string"
         },
         "zip": {
-          "type": "string"
-        },
-        "cvv": {
           "type": "string"
         },
         "createdAt": {
