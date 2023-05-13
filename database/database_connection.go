@@ -4,18 +4,17 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
-	"os"
 	"sg/models"
 	"time"
 )
 
 func Connect() *gorm.DB {
-	username := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	dbHost := os.Getenv("DB_HOST")
+	username := ""        //os.Getenv("DB_USER")
+	password := ""        // os.Getenv("DB_PASSWORD")
+	dbName := "postgres"  // os.Getenv("DB_NAME")
+	dbHost := "localhost" //os.Getenv("DB_HOST")
 	dbType := "postgres"
-	dbPort := os.Getenv("DB_PORT")
+	dbPort := "5432" // os.Getenv("DB_PORT")
 
 	dbUri := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, dbHost, dbPort, dbName)
 
@@ -25,8 +24,7 @@ func Connect() *gorm.DB {
 	}
 	database.Debug().AutoMigrate(models.User{})
 	database.Debug().AutoMigrate(models.Order{})
-	database.Debug().AutoMigrate(models.OrderModel{})
-	database.Debug().AutoMigrate(models.GoldModel{})
+	database.Debug().AutoMigrate(models.Gold{})
 
 	database.DB().SetMaxIdleConns(10)
 	database.DB().SetMaxOpenConns(100)
