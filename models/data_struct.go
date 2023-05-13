@@ -1,20 +1,9 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
 	pb "sg/proto"
 	"time"
 )
-
-type Order struct {
-	ID          uint               `gorm:"primary_key"`
-	Price       uint               `json:"price"`
-	Gold        GoldModel          `json:"gold"`
-	User        User               `json:"user"`
-	OrderStatus pb.OrderStatusEnum `json:"orderStatus"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-}
 
 type User struct {
 	ID          uint   `gorm:"primary_key"`
@@ -25,23 +14,27 @@ type User struct {
 	Country     string `json:"country" form:"Country"`
 	City        string `json:"city" form:"City"`
 	Zip         string `json:"zip" form:"Zip"`
-	CVV         string `json:"CVV" form:"CVV"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
 
-type OrderModel struct {
-	gorm.Model
-	UserId       uint          `json:"userId" form:"userId"`
-	GoldWeight   pb.GoldWeight `json:"goldWeight" form:"goldWeight"`
-	GoldQuantity uint          `json:"goldQuantity" form:"goldQuantity"`
+type Gold struct {
+	ID        uint          `gorm:"primary_key"`
+	Weight    pb.GoldWeight `json:"weight"`
+	Quantity  float32       `json:"quantity"`
+	PriceTime time.Time
 }
 
-type GoldModel struct {
-	gorm.Model
-	Weight    pb.GoldWeight `json:"weight"`
-	Quantity  uint32        `json:"quantity"`
-	PriceTime time.Time
+type Order struct {
+	ID          uint               `json:"ID,omitempty"`
+	Price       uint32             `json:"price"`
+	UserID      uint               `json:"userID"`
+	GoldID      uint               `json:"goldID"`
+	User        User               `json:"user" gorm:"foreignKey:UserID"`
+	Gold        Gold               `json:"gold" gorm:"foreignKey:GoldID"`
+	OrderStatus pb.OrderStatusEnum `json:"orderStatus,omitempty"`
+	CreatedAt   time.Time          `json:"createdAt"`
+	UpdatedAt   time.Time          `json:"updatedAt"`
 }
 
 //
